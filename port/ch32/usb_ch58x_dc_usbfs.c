@@ -441,9 +441,10 @@ int usb_dc_init(void)
  * @param[in]        None
  * @retval           None
  */
-__attribute__((interrupt("WCH-Interrupt-fast")))
-__attribute__((section(".highcode"))) void
-USBD_IRQHandler(void)
+__attribute__((section(".highcode")))
+__attribute__((used))
+__attribute__((noinline))
+static void USBD_IRQHandler_Impl(void)
 {
     volatile uint8_t intflag = 0;
     intflag = CH58x_USBFS_DEV->USB_INT_FG;
@@ -618,3 +619,11 @@ USBD_IRQHandler(void)
         CH58x_USBFS_DEV->USB_INT_FG = intflag;
     }
 }
+
+__attribute__((section(".highcode")))
+__attribute__((naked))
+void USBD_IRQHandler(void) {
+    asm volatile ("jal USBD_IRQHandler_Impl\n\tmret");
+    __builtin_unreachable(); // suppress the usual ret
+}
+
