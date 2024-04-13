@@ -623,7 +623,7 @@ static void USBD_IRQHandler_Impl(void)
 __attribute__((section(".highcode")))
 __attribute__((naked))
 void USBD_IRQHandler(void) {
-    asm volatile ("jal USBD_IRQHandler_Impl\n\tmret");
+    __asm volatile ("jal USBD_IRQHandler_Impl\n\tmret");
     __builtin_unreachable(); // suppress the usual ret
 }
 
